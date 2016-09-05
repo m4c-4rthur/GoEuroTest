@@ -81,6 +81,8 @@ public class LogUtil {
             logger.info("[" + Thread.currentThread().getName() + "]" + ((Class) Class.forName(caller.getClassName())).getSimpleName() + "." + caller.getMethodName() + "(): " + msg);
         } catch (ClassNotFoundException ex) {
             logger.error(caller.getClassName() + "." + caller.getMethodName() + "() | " + msg);
+            logger.error(caller.getClassName() + "." + caller.getMethodName() + "() | " + msg);
+            logger.error(caller.getClassName() + "." + caller.getMethodName() + "() | " + msg);
         }
     }
 
