@@ -5,7 +5,7 @@
  */
 package com.goeuro.goeurotest.service;
 
-import com.goeuro.goeurotest.app.App;
+
 import com.goeuro.goeurotest.defines.Defines;
 import java.io.BufferedReader;
 import java.io.FileWriter;
@@ -17,8 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.json.JSONArray;
@@ -29,11 +27,19 @@ import org.json.JSONObject;
  * @author hesham.ibrahim
  */
 public class Services {
-
-    public String getJsonResponse(String url) {
+    
+    
+    /***
+     * Query the input URL and return the result as a String
+     * @param url
+     * @return jsonResponse
+     * @throws Exception 
+     */
+    public String getJsonResponse(String url) throws Exception{
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
-        String urlResponse = "";
+        String jsonResponse = "";
+        String responseLine = "";
         try {
             URL servleturl = new URL(url);
             HttpURLConnection servletconnection = (HttpURLConnection) servleturl.openConnection();
@@ -42,25 +48,21 @@ public class Services {
             inputStream = servletconnection.getInputStream();
             InputStreamReader bin = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(bin);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String responseLine = "";
-        urlResponse = "";
-
-        try {
             while ((responseLine = bufferedReader.readLine()) != null) {
-                urlResponse = urlResponse + responseLine;
+                jsonResponse = jsonResponse + responseLine;
             }
+        } catch (MalformedURLException ex) {
+            throw new Exception("MalformedURLException exception occured while trying to contect the API " + ex.getMessage());
         } catch (IOException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            throw new Exception("IOException exception occured while trying to contect the API " + ex.getMessage());
         }
-
-        return urlResponse;
+        return jsonResponse;
     }
-
+    /***
+     * Parse the String as json array and extract the data to List of lists
+     * @param jsonResponse
+     * @return mainlist
+     */
     public List parseJsonResponse(String jsonResponse) {
         JSONArray jsonarray = null;
         List mainlist = null;
@@ -74,15 +76,26 @@ public class Services {
             list.add(jsonobject.getString("name"));
             list.add(jsonobject.getString("type"));
             JSONObject jsonPositiont = jsonobject.getJSONObject("geo_position");
+            if(jsonPositiont.has("longitude") && jsonPositiont.has("latitude"))
+            {
             list.add(String.valueOf(jsonPositiont.getDouble("longitude")));
             list.add(String.valueOf(jsonPositiont.getDouble("latitude")));
+            }else{
+               list.add("N/A");
+               list.add("N/A");
+            }
             mainlist.add(list);
             list = new ArrayList<>();
         }
         return mainlist;
     }
-
-    public void writeCSV(List recordsList) {
+    
+    /**
+     * Write CSV file using list of records and pre defined static header
+     * @param recordsList
+     * @throws Exception 
+     */
+    public void writeCSV(List recordsList) throws Exception {
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
         try {
@@ -97,7 +110,7 @@ public class Services {
             fileWriter.close();
             csvFilePrinter.close();
         } catch (IOException ex) {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            throw new Exception("IOException occured while writing CSV file " + ex.getMessage());
         }
     }
 

@@ -7,11 +7,7 @@
  * 
  * 
  */
-
-
-
 package com.goeuro.goeurotest.app;
-
 
 import com.goeuro.goeurotest.defines.Defines;
 import com.goeuro.goeurotest.service.Services;
@@ -21,24 +17,35 @@ import java.util.List;
  * Hello world!
  *
  */
-public class App 
-{
+public class App {
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
 
         try {
-            String cityName = args[0];
-            String url = Defines.apiUrl.replace("$CITY_NAME$", cityName);
-            Services service = new Services();
-            String jsonResponse = service.getJsonResponse(url);
-            List recordsList = service.parseJsonResponse(jsonResponse);
-            service.writeCSV(recordsList);
-            
-        }catch(Exception ex)
-        {
-            
+            String cityName = args[0].trim();
+            if (cityName == null) {
+                throw new Exception("City name Wasn't provided, please provide city name as an argument");
+            }
+            boolean numbersValidation = cityName.matches("\\D*");
+            if (numbersValidation) {
+                String url = Defines.API_URL.replace("$CITY_NAME$", cityName);
+                System.out.println("Starting serving request with the following url " + url);
+                Services service = new Services();
+                String jsonResponse = service.getJsonResponse(url);
+                if (jsonResponse == null) {
+                    throw new Exception("Json response was empty");
+                }
+                List recordsList = service.parseJsonResponse(jsonResponse);
+                service.writeCSV(recordsList);
+            } else {
+                throw new Exception("City name contains numbers, please provide city name without numbers");
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }
