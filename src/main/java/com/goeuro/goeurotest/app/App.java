@@ -2,8 +2,8 @@
  * GoEuroTest By Hesham
  * Input: city name as argument
  * Output: CSV file with the result 
- * Description: This app simply query API url with the city name as input variable 
- * and returns JSON data describes the city which was mentioned, then saving this data to CSV file 
+ * Description: This app simply query an API url with the city name as input variable 
+ * and returns JSON data describes the city which was mentioned, then saving this data into CSV file 
  * 
  * 
  */
