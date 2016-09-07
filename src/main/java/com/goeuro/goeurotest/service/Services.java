@@ -5,7 +5,6 @@
  */
 package com.goeuro.goeurotest.service;
 
-
 import com.goeuro.goeurotest.defines.Defines;
 import java.io.BufferedReader;
 import java.io.FileWriter;
@@ -27,15 +26,16 @@ import org.json.JSONObject;
  * @author hesham.ibrahim
  */
 public class Services {
-    
-    
-    /***
+
+    /**
+     * *
      * Query the input URL and return the result as a String
+     *
      * @param url
      * @return jsonResponse
-     * @throws Exception 
+     * @throws Exception
      */
-    public String getJsonResponse(String url) throws Exception{
+    public String getJsonResponse(String url) throws Exception {
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
         String jsonResponse = "";
@@ -51,15 +51,23 @@ public class Services {
             while ((responseLine = bufferedReader.readLine()) != null) {
                 jsonResponse = jsonResponse + responseLine;
             }
+            if (jsonResponse == null || jsonResponse == "") {
+                
+                throw new Exception("Json response is empty, there is no data to write in file");
+            }
         } catch (MalformedURLException ex) {
             throw new Exception("MalformedURLException exception occured while trying to contect the API " + ex.getMessage());
         } catch (IOException ex) {
             throw new Exception("IOException exception occured while trying to contect the API " + ex.getMessage());
         }
+
         return jsonResponse;
     }
-    /***
+
+    /**
+     * *
      * Parse the String as json array and extract the data to List of lists
+     *
      * @param jsonResponse
      * @return mainlist
      */
@@ -76,24 +84,24 @@ public class Services {
             list.add(jsonobject.getString("name"));
             list.add(jsonobject.getString("type"));
             JSONObject jsonPositiont = jsonobject.getJSONObject("geo_position");
-            if(jsonPositiont.has("longitude") && jsonPositiont.has("latitude"))
-            {
-            list.add(String.valueOf(jsonPositiont.getDouble("longitude")));
-            list.add(String.valueOf(jsonPositiont.getDouble("latitude")));
-            }else{
-               list.add("N/A");
-               list.add("N/A");
+            if (jsonPositiont.has("longitude") && jsonPositiont.has("latitude")) {
+                list.add(String.valueOf(jsonPositiont.getDouble("longitude")));
+                list.add(String.valueOf(jsonPositiont.getDouble("latitude")));
+            } else {
+                list.add("N/A");
+                list.add("N/A");
             }
             mainlist.add(list);
             list = new ArrayList<>();
         }
         return mainlist;
     }
-    
+
     /**
      * Write CSV file using list of records and pre defined static header
+     *
      * @param recordsList
-     * @throws Exception 
+     * @throws Exception
      */
     public void writeCSV(List recordsList) throws Exception {
         FileWriter fileWriter = null;

@@ -11,6 +11,7 @@ package com.goeuro.goeurotest.app;
 
 import com.goeuro.goeurotest.defines.Defines;
 import com.goeuro.goeurotest.service.Services;
+import com.goeuro.goeurotest.service.Validation;
 import java.util.List;
 
 /**
@@ -26,24 +27,13 @@ public class App {
 
         try {
             String cityName = args[0].trim();
-            if (cityName == null) {
-                throw new Exception("City name Wasn't provided, please provide city name as an argument");
-            }
-            boolean numbersValidation = cityName.matches("\\D*");
-            if (numbersValidation) {
-                String url = Defines.API_URL.replace("$CITY_NAME$", cityName);
-                System.out.println("Starting serving request with the following url " + url);
-                Services service = new Services();
-                String jsonResponse = service.getJsonResponse(url);
-                if (jsonResponse == null) {
-                    throw new Exception("Json response was empty");
-                }
-                List recordsList = service.parseJsonResponse(jsonResponse);
-                service.writeCSV(recordsList);
-            } else {
-                throw new Exception("City name contains numbers, please provide city name without numbers");
-            }
-
+            Validation.validateInput(cityName);
+            String url = Defines.API_URL.replace("$CITY_NAME$", cityName);
+            System.out.println("Starting serving request with the following url " + url);
+            Services service = new Services();
+            String jsonResponse = service.getJsonResponse(url);
+            List recordsList = service.parseJsonResponse(jsonResponse);
+            service.writeCSV(recordsList);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
