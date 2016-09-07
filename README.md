@@ -1,2 +1,2 @@
 # GoEuroTest
-Test Project for GoEuro Recruitment 
+Test Project for GoEuro
