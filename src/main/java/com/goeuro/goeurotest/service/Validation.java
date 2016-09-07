@@ -16,6 +16,7 @@ public class Validation {
             if (cityName == null || cityName == "") {
                 throw new Exception("City name Wasn't provided, please provide city name as an argument");
             }
+            //city name shouldn't contains numbers
             boolean numbersValidation = cityName.matches("\\D*");
 
             if (!numbersValidation) {

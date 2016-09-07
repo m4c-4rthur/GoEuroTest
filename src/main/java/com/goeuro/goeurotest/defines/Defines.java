@@ -16,5 +16,6 @@ public class Defines {
     public static final String[] FILE_HEADER = {"_id","name", "type", "longitude", "latitude"};
     public static final String FILE_NAME = "City_Result.csv";
     public static final String logPropertiesFileName = "log4j.properties";
+    public static final int NUMBER_OF_RETRIELS = 3;
     
 }

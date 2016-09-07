@@ -27,9 +27,12 @@ import org.json.JSONObject;
  */
 public class Services {
 
+    private int counter = 0;
+
     /**
      * *
-     * Query the input URL and return the result as a String
+     * Query the input URL and return the result as a String, the method retry configured 
+     * number of times in case of IOexception occurred 
      *
      * @param url
      * @return jsonResponse
@@ -51,14 +54,20 @@ public class Services {
             while ((responseLine = bufferedReader.readLine()) != null) {
                 jsonResponse = jsonResponse + responseLine;
             }
+
             if (jsonResponse == null || jsonResponse == "") {
-                
+
                 throw new Exception("Json response is empty, there is no data to write in file");
             }
+
         } catch (MalformedURLException ex) {
             throw new Exception("MalformedURLException exception occured while trying to contect the API " + ex.getMessage());
         } catch (IOException ex) {
-            throw new Exception("IOException exception occured while trying to contect the API " + ex.getMessage());
+            if (counter < Defines.NUMBER_OF_RETRIELS) {
+                counter++;
+                getJsonResponse(url);
+            }
+            throw new Exception("IOException exception occured while trying to contact the API " + ex.getMessage());
         }
 
         return jsonResponse;
